@@ -35,6 +35,9 @@
     :execute (fn [args]
                (client/watch args))}))
 
-(defn ^:export GhooxxPlugin []
+(defn GhooxxPlugin []
   #js {"tool" #js {"github_notify" github-notify-tool
                    "github_watch" github-watch-tool}})
+
+(defn ^:export init []
+  (GhooxxPlugin))

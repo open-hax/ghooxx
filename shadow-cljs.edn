@@ -7,7 +7,8 @@
  {:plugin
   {:target :esm
    :output-dir "dist"
-   :modules {:plugin {:entries [ghooxx.plugin.entry]}}
+   :modules {:plugin {:exports {:default ghooxx.plugin.entry/GhooxxPlugin}}}
+   :js-options {:js-provider :import}
    :compiler-options
    {:output-feature-set :es-next}}
 
