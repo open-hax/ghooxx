@@ -26,7 +26,7 @@
 
 (defn events
   [request reply]
-  (let [query (js->clj (aget (.-query request) "query") :keywordize-keys true)
+  (let [query (js->clj (.-query request) :keywordize-keys true)
         events (store/list-events query)]
     (.send reply (clj->js {:ok true :events events}))))
 
