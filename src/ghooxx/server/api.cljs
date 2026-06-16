@@ -2,15 +2,14 @@
   "OpenCode-compatible API surface for the ghooxx plugin tools."
   (:require [ghooxx.server.store :as store]))
 
-(defn notify
+(defn ^:async notify
   [request reply]
   (let [payload (js->clj (.-body request) :keywordize-keys true)
         event (assoc payload :source "plugin")
         stored (store/add-event! event)]
-    (.send reply (clj->js {:ok true
-                             :id (:id stored)}))))
+    (.send reply (clj->js {:ok true :id (:id stored)}))))
 
-(defn watch
+(defn ^:async watch
   [request reply]
   (let [payload (js->clj (.-body request) :keywordize-keys true)
         action (keyword (:action payload "add"))]
@@ -24,13 +23,13 @@
 
       (.send reply (clj->js {:ok false :error (str "unknown action: " (name action))})))))
 
-(defn events
+(defn ^:async events
   [request reply]
   (let [query (js->clj (.-query request) :keywordize-keys true)
         events (store/list-events query)]
     (.send reply (clj->js {:ok true :events events}))))
 
-(defn health
+(defn ^:async health
   [_request reply]
   (.send reply (clj->js {:status "ok" :service "ghooxx"})))
 

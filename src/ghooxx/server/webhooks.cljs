@@ -2,7 +2,7 @@
   "GitHub webhook ingestion."
   (:require [ghooxx.server.store :as store]))
 
-(defn handle-github
+(defn ^:async handle-github
   [request reply]
   (let [event-type (or (aget (.-headers request) "x-github-event") "unknown")
         payload (js->clj (.-body request) :keywordize-keys true)

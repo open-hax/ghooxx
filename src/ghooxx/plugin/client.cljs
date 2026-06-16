@@ -6,32 +6,31 @@
   (or (aget js/process.env "GHOOXX_URL")
       "http://127.0.0.1:7999"))
 
-(defn- request!
+(defn ^:async request!
   [method path body]
   (let [url (str (base-url) path)
         init #js {:method method
                   :headers #js {"Content-Type" "application/json"}}
-        _ (when body (aset init "body" (js/JSON.stringify (clj->js body))))]
-    (-> (js/fetch url init)
-        (.then (fn [res] (.text res)))
-        (.then (fn [text]
-                 (try
-                   (js/JSON.parse text)
-                   (catch :default _ text)))))))
+        _ (when body (aset init "body" (js/JSON.stringify (clj->js body))))
+        res (await (js/fetch url init))
+        text (await (.text res))]
+    (try
+      (js/JSON.parse text)
+      (catch :default _ text))))
 
-(defn notify
+(defn ^:async notify
   [payload]
-  (request! "POST" "/api/v1/notify" payload))
+  (await (request! "POST" "/api/v1/notify" payload)))
 
-(defn watch
+(defn ^:async watch
   [payload]
-  (request! "POST" "/api/v1/watch" payload))
+  (await (request! "POST" "/api/v1/watch" payload)))
 
-(defn recent-events
+(defn ^:async recent-events
   ([] (recent-events {}))
   ([params]
    (let [query (when (seq params)
                  (str "?" (str/join "&"
                          (map (fn [[k v]] (str (name k) "=" (js/encodeURIComponent (str v))))
                               params))))]
-     (request! "GET" (str "/api/v1/events" (or query "")) nil))))
+     (await (request! "GET" (str "/api/v1/events" (or query "")) nil)))))
