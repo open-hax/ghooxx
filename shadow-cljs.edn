@@ -1,0 +1,20 @@
+{:source-paths ["src"]
+
+ :dependencies
+ []
+
+ :builds
+ {:plugin
+  {:target :esm
+   :output-dir "dist"
+   :modules {:plugin {:entries [ghooxx.plugin.entry]}}
+   :compiler-options
+   {:output-feature-set :es-next}}
+
+  :server
+  {:target :node-script
+   :output-dir "dist"
+   :output-to "dist/server.cjs"
+   :main ghooxx.server.main/main
+   :compiler-options
+   {:output-feature-set :es-next}}}}
